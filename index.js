@@ -59,23 +59,47 @@ async function run() {
             const result = await houseHunterCollection.find().toArray();
             res.send(result)
         });
-        // delete api for owners data
-
-        app.delete('/deleteData/:id',async(req,res)=>{
-            const id= req.params.id;
+        // get single owner posted data
+        app.get('/getAllOwnerData/:id',async(req,res)=>{
+            const id=req.params.id;
             const query={_id:new ObjectId(id)};
-            const result= await houseHunterCollection.deleteOne(query);
+            const result= await houseHunterCollection.findOne(query);
             res.send(result)
         })
 
 
+        // delete api for owners data
+        app.delete('/deleteData/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await houseHunterCollection.deleteOne(query);
+            res.send(result)
+        })
 
-
-
-
-
-
-
+        // update api for owners data
+        app.put('/updateHouses/:id', async (req, res) => {
+            const id = req.params.id;
+            const update = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const data = {
+                $set: {
+                    name: update.name,
+                    address: update.address,
+                    city: update.city,
+                    bedrooms: update.bedrooms,
+                    bathrooms: update.bathrooms,
+                    size: update.size,
+                    picture: update.picture,
+                    date: update.date,
+                    rent: update.rent,
+                    number: update.number,
+                    description: update.description,
+                }
+            }
+            const result = await houseHunterCollection.updateOne(filter, data, options);
+            res.send(result)
+        })
 
 
 
