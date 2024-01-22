@@ -59,11 +59,24 @@ async function run() {
             const result = await houseHunterCollection.find().toArray();
             res.send(result)
         });
+        // search api
+        app.get('/getAllSearchData', async (req, res) => {
+            const search = req.query.search
+            const sort = req.query.sort
+            const query = { name: { $regex: `${search}`, $options: 'i' } };
+            const sortOptions = {
+                sort: {
+                    'rent': sort === 'asc' ? 1 : -1
+                }
+            }
+            const result = await houseHunterCollection.find(query, sortOptions).toArray();
+            res.send(result)
+        });
         // get single owner posted data
-        app.get('/getAllOwnerData/:id',async(req,res)=>{
-            const id=req.params.id;
-            const query={_id:new ObjectId(id)};
-            const result= await houseHunterCollection.findOne(query);
+        app.get('/getAllOwnerData/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await houseHunterCollection.findOne(query);
             res.send(result)
         })
 
