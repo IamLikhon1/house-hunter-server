@@ -28,6 +28,7 @@ async function run() {
         await client.connect();
         const userCollection = client.db('house-hunter').collection('user');
         const houseHunterCollection = client.db('house-hunter').collection('hunter')
+        const bookRentHouseCollection = client.db('house-hunter').collection('rent')
 
         // post api for users
         app.post('/usersPost', async (req, res) => {
@@ -59,6 +60,7 @@ async function run() {
             const result = await houseHunterCollection.find().toArray();
             res.send(result)
         });
+
         // search api
         app.get('/getAllSearchData', async (req, res) => {
             const search = req.query.search
@@ -114,7 +116,26 @@ async function run() {
             res.send(result)
         })
 
+        // post api renter send data
+        app.post('/postRenterData', async (req, res) => {
+            const postData = req.body;
+            const result = await bookRentHouseCollection.insertOne(postData);
+            res.send(result)
+        });
 
+        // get all renter data
+        app.get('/getAllRenterData', async (req, res) => {
+            const result = await bookRentHouseCollection.find().toArray();
+            res.send(result)
+        });
+
+        // delete api for renters data
+        app.delete('/deleteDataRenter/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await bookRentHouseCollection.deleteOne(query);
+            res.send(result)
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
